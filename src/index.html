@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Page title</title>
-    <!-- <link rel="stylesheet" href="./sass/index.scss" /> -->
-    <script type="module" src="./index.js"></script>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <!-- ❗️❗️❗️ Add partials like so for every page -->
-    <include src="./partials/example.html"></include>
+    <div class="container">
+      <ul class="page-nav">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="shoplist.html">Shopping list</a></li>
+      </ul>
+      <div class="book-list"></div>
+    </div>
+    <script src="app.js" type="module"></script>
   </body>
 </html>
