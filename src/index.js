@@ -1,146 +1,161 @@
-// import Pagination from 'tui-pagination';
-// import 'tui-pagination/dist/tui-pagination.css';
-// // const _ = require('lodash');
+import Pagination from 'tui-pagination';
+import 'tui-pagination/dist/tui-pagination.css';
+// const _ = require('lodash');
 
 
-// const LOCAL_KEY = "booklist";
-// const container = document.querySelector("#pagination");
-// const cartList = document.querySelector(".cart-list");
-// const emptyCart = document.querySelector(".empty-cart");
+const LOCAL_KEY = "booklist";
+const container = document.querySelector("#pagination");
+const cartList = document.querySelector(".cart-list");
+const emptyCart = document.querySelector(".empty-cart");
 
-// const options = {
-//   totalItems: 0,
-//   itemsPerPage: 1,
-//   visiblePages: 3,
-//   page: 1,
-//   firstItemClassName: 'tui-first-child',
-//   lastItemClassName: 'tui-last-child',
-// };
+let currentPage = 1;
+const itemPerPage = 3;
+const visiblePage = 3;
 
-// const startPage = 1;
+const options = {
+    totalItems: 500,
+    itemsPerPage: itemPerPage,
+    visiblePages: visiblePage,
+    page: 1,
+    centerAlign: false,
+}
 
-// let currentPage = 1;
-// const itemPerPage = 3;
+let pagination = new Pagination(container, options);
 
-
-// let data = [];
-
-// document.addEventListener("click", handlerDeleteCart);
+ container.style.display = "none";
 
 
-//     try {
-//         data = JSON.parse(localStorage.getItem(LOCAL_KEY));
-//         if (!data.length) {
-//             emptyCart.style.display = "block";
-//             return;
-//         } 
-//         emptyCart.style.display = "none";
-//         cartList.innerHTML = test(data);
-//         options.totalItems = data.length;
-//         if (data.length <= 3) {
-//            pagination.reset();
-//         }
-//         const pagination = new Pagination(container, options);
-//         pagination.on('beforeMove', (event) => {
-//             currentPage = event.page;
-//             options.page = currentPage;
-//             cartList.innerHTML = test(data);
-//     });
-//   } catch (error) {
-//     console.error("Get state error: ", error.message);
-//   }
+let data = [];
+
+document.addEventListener("click", handlerDeleteCart);
 
 
-
-
-
-
-// // ----------------------------------------------------------------------------------------РОЗМІТКА
-
-
-
-// function test(arr) {
-//     cartList.innerHTML = "";
-//     const start = itemPerPage * (currentPage-1);
-//     const end = start + itemPerPage;
-//     const paginatedData = arr.slice(start, end);
-//     return paginatedData.map(({ _id, author, book_image, title, description, buy_links: [{url:amazon}, {url:appleBook}], list_name }) =>
-//         ` <li class="cart-item" data-id ="${_id}">
-//             <img src="${book_image}" alt="${title}" class="cart-item-img">
-//             <div class="cart-item-content">
-//             <div class="cart-content-header">
-//                 <h3 class="cart-item-title">${title}</h3>
-//                 <p class="cart-item-category cart-item-label">${list_name}</p>
-//             </div>
-//                 <p class="cart-item-description">${description}</p>
-//                 <p class="cart-item-author cart-item-label">${author}</p>
-//                 <button class="cart-item-delete"></button>
-//                 <ul class="cart-item-links">
-//                 <li><a href="${amazon}" class="cart-item-link">amazon</a></li>
-//                 <li><a href="${appleBook}" class="cart-item-link">apple book</a></li>
-//                 </ul>
-//             </div>
-//         </li>`).join("");
-// }
-
-// const addItems = array =>
-//   array
-//     .map(({ _id, author, book_image, title, description, buy_links: [{url:amazon}, {url:appleBook}], list_name }) =>
-//         ` <li class="cart-item" data-id ="${_id}">
-//             <img src="${book_image}" alt="${title}" class="cart-item-img">
-//             <div class="cart-item-content">
-//             <div class="cart-content-header">
-//                 <h3 class="cart-item-title">${title}</h3>
-//                 <p class="cart-item-category cart-item-label">${list_name}</p>
-//             </div>
-//                 <p class="cart-item-description">${description}</p>
-//                 <p class="cart-item-author cart-item-label">${author}</p>
-//                 <button class="cart-item-delete"></button>
-//                 <ul class="cart-item-links">
-//                 <li><a href="${amazon}" class="cart-item-link">amazon</a></li>
-//                 <li><a href="${appleBook}" class="cart-item-link">apple book</a></li>
-//                 </ul>
-//             </div>
-//         </li>`)
-//     .slice(0, 3)
-//         .join(' ');
-    
-// const updatePage = str => (cartList.innerHTML = str);
+    try {
+        data = JSON.parse(localStorage.getItem(LOCAL_KEY));
+        if (!data.length) {
+            emptyCart.style.display = "block";
+            return;
+        } 
+        emptyCart.style.display = "none";
+        cartList.innerHTML = test(data);
+        // createPagination(data);
+        if (data.length > itemPerPage) {
+            container.style.display = "block";
+            options.totalItems = data.length;
+            pagination = new Pagination(container, options);
+            pagination.on('beforeMove', (event) => {
+            currentPage = event.page;
+            // options.page = currentPage;
+            cartList.innerHTML = test(data);
+    });
+        }
         
+  } catch (error) {
+    console.error("Get state error: ", error.message);
+  }
+
+
+
+
+
+
+// ----------------------------------------------------------------------------------------РОЗМІТКА
+
+
+
+function test(arr) {
+    cartList.innerHTML = "";
+    const start = itemPerPage * (currentPage-1);
+    const end = start + itemPerPage;
+    const paginatedData = arr.slice(start, end);
+//     pagination.on('afterMove', (event) => {
+//      const currentPage = event.page;
+//         if (!paginatedData.length) {
+//          pagination.movePageTo(currentPage-1)
+//      }
+// });
+    return paginatedData.map(({ _id, author, book_image, title, description, buy_links: [{url:amazon}, {url:appleBook}], list_name }) =>
+        ` <li class="cart-item" data-id ="${_id}">
+            <img src="${book_image}" alt="${title}" class="cart-item-img">
+            <div class="cart-item-content">
+            <div class="cart-content-header">
+                <h3 class="cart-item-title">${title}</h3>
+                <p class="cart-item-category cart-item-label">${list_name}</p>
+            </div>
+                <p class="cart-item-description">${description}</p>
+                <p class="cart-item-author cart-item-label">${author}</p>
+                <button class="cart-item-delete"></button>
+                <ul class="cart-item-links">
+                <li><a href="${amazon}" class="cart-item-link">amazon</a></li>
+                <li><a href="${appleBook}" class="cart-item-link">apple book</a></li>
+                </ul>
+            </div>
+        </li>`).join("");
+}
+
+
+// ----------------------------------------------------------------------------------------ВИДАЛЕННЯ ЕЛЕМЕНТІВ КОРЗИНИ
+
+function handlerDeleteCart(e) {
+    if (!e.target.classList.contains("cart-item-delete")) return;
+   
+    const idOfBook = e.target.closest(".cart-item").dataset.id;
+    try {
+        const data = JSON.parse(localStorage.getItem(LOCAL_KEY));
+        const products = data.filter(({ _id }) => _id !== idOfBook);
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(products));
+        const testdata = JSON.parse(localStorage.getItem(LOCAL_KEY));
+        if (!testdata.length) {
+    emptyCart.style.display = "block";
+        }
+        // let pagination = new Pagination(container, options);
+        // const updateData = JSON.parse(localStorage.getItem(LOCAL_KEY));
+        // options.visiblePages = Math.ceil(data.length / itemPerPage);
+        // pagination.setItemsPerPage(updateData.length)
+        if (testdata.length <= itemPerPage) {
+           container.style.display = "none";
+        }
+        // options.totalItems = testdata.length;
+        // pagination.setTotalItems(testdata.length);
+        pagination.reset(testdata.length);
+        // pagination.movePageTo(currentPage-1)
+        cartList.innerHTML = test(testdata);
+        //  pagination.reset(testdata.length);
+        // options.totalItems = arr.length;
+        // pagination = new Pagination(container, options);
+  } catch (error) {
+    console.error("Get state error: ", error.message);
+    }
+}
+
 
 // const addPagination = () => {
 //   const pagination = new Pagination('pagination', options);
 //   pagination.on('beforeMove',  evt => {
-//     const { page } = evt;
-//     const { results } =  getData(page);
+//     // const { page } = evt;
+//     const data = JSON.parse(localStorage.getItem(LOCAL_KEY));;
 
-//     if (results) {
-//       updatePage(addItems(results));
+//     if (!data.length) {
+//       updatePage(addItems(data));
 //     } else {
 //       return false;
 //     }
 //   });
 // };
 
-// // ----------------------------------------------------------------------------------------ВИДАЛЕННЯ ЕЛЕМЕНТІВ КОРЗИНИ
+// const start =  () => {
+//   const data = JSON.parse(localStorage.getItem(LOCAL_KEY));;
+//   options.totalItems =data.length;
+//   updatePage(addItems(data));
+//   addPagination();
+// };
 
-// function handlerDeleteCart(e) {
-//     if (!e.target.classList.contains("cart-item-delete")) return;
-   
-//     const idOfBook = e.target.closest(".cart-item").dataset.id; 
-//     try {
-//         const products = data.filter(({ _id }) => _id !== idOfBook);
-//         localStorage.setItem(LOCAL_KEY, JSON.stringify(products));
-//         data = JSON.parse(localStorage.getItem(LOCAL_KEY));
-//         options.visiblePages = Math.ceil(data.length / itemPerPage);
-//        cartList.innerHTML = test(data);
-//   } catch (error) {
-//     console.error("Get state error: ", error.message);
-//     }
-//     if (!data.length) {
-//     emptyCart.style.display = "block";
-// }
-// }
+
+
+// ----------------------------------------------------------------------------------------  ВАРІАНТ-ВАРІАНТ
+
+// localStorage.clear();
+
 
 
 
@@ -489,105 +504,105 @@
 
 // ----------------------------------------------------------------------------------------ВАРІАНТ З ПАГІНАЦІЄЮ але без видалення
 
-import Pagination from 'tui-pagination';
-import 'tui-pagination/dist/tui-pagination.css';
-// const _ = require('lodash');
+// import Pagination from 'tui-pagination';
+// import 'tui-pagination/dist/tui-pagination.css';
+// // const _ = require('lodash');
 
 
-const LOCAL_KEY = "booklist";
-const container = document.querySelector("#pagination");
-const cartList = document.querySelector(".cart-list");
-const emptyCart = document.querySelector(".empty-cart");
+// const LOCAL_KEY = "booklist";
+// const container = document.querySelector("#pagination");
+// const cartList = document.querySelector(".cart-list");
+// const emptyCart = document.querySelector(".empty-cart");
 
-const options = {
-    totalItems: 500,
-    itemsPerPage: 3,
-    visiblePages: 3,
-    page: 1,
-    centerAlign: false,
-}
+// const options = {
+//     totalItems: 500,
+//     itemsPerPage: 3,
+//     visiblePages: 3,
+//     page: 1,
+//     centerAlign: false,
+// }
 
-let currentPage = 1;
-const itemPerPage = 3;
-
-
-let data = [];
-
-document.addEventListener("click", handlerDeleteCart);
+// let currentPage = 1;
+// const itemPerPage = 3;
 
 
-    try {
-        data = JSON.parse(localStorage.getItem(LOCAL_KEY));
-        if (!data.length) {
-            emptyCart.style.display = "block";
-            return;
-        } 
-        emptyCart.style.display = "none";
-        cartList.innerHTML = test(data);
-        options.totalItems = data.length;
-        if (data.length <= 3) {
-           pagination.reset();
-        }
-        const pagination = new Pagination(container, options);
-        pagination.on('beforeMove', (event) => {
-            currentPage = event.page;
-            options.page = currentPage;
-            cartList.innerHTML = test(data);
-    });
-  } catch (error) {
-    console.error("Get state error: ", error.message);
-  }
+// let data = [];
+
+// document.addEventListener("click", handlerDeleteCart);
 
 
-
+//     try {
+//         data = JSON.parse(localStorage.getItem(LOCAL_KEY));
+//         if (!data.length) {
+//             emptyCart.style.display = "block";
+//             return;
+//         } 
+//         emptyCart.style.display = "none";
+//         cartList.innerHTML = test(data);
+//         options.totalItems = data.length;
+//         if (data.length <= 3) {
+//            pagination.reset();
+//         }
+//         const pagination = new Pagination(container, options);
+//         pagination.on('beforeMove', (event) => {
+//             currentPage = event.page;
+//             options.page = currentPage;
+//             cartList.innerHTML = test(data);
+//     });
+//   } catch (error) {
+//     console.error("Get state error: ", error.message);
+//   }
 
 
 
-// ----------------------------------------------------------------------------------------РОЗМІТКА
 
 
 
-function test(arr) {
-    cartList.innerHTML = "";
-    const start = itemPerPage * (currentPage-1);
-    const end = start + itemPerPage;
-    const paginatedData = arr.slice(start, end);
-    return paginatedData.map(({ _id, author, book_image, title, description, buy_links: [{url:amazon}, {url:appleBook}], list_name }) =>
-        ` <li class="cart-item" data-id ="${_id}">
-            <img src="${book_image}" alt="${title}" class="cart-item-img">
-            <div class="cart-item-content">
-            <div class="cart-content-header">
-                <h3 class="cart-item-title">${title}</h3>
-                <p class="cart-item-category cart-item-label">${list_name}</p>
-            </div>
-                <p class="cart-item-description">${description}</p>
-                <p class="cart-item-author cart-item-label">${author}</p>
-                <button class="cart-item-delete"></button>
-                <ul class="cart-item-links">
-                <li><a href="${amazon}" class="cart-item-link">amazon</a></li>
-                <li><a href="${appleBook}" class="cart-item-link">apple book</a></li>
-                </ul>
-            </div>
-        </li>`).join("");
-}
+// // ----------------------------------------------------------------------------------------РОЗМІТКА
 
 
-// ----------------------------------------------------------------------------------------ВИДАЛЕННЯ ЕЛЕМЕНТІВ КОРЗИНИ
 
-function handlerDeleteCart(e) {
-    if (!e.target.classList.contains("cart-item-delete")) return;
+// function test(arr) {
+//     cartList.innerHTML = "";
+//     const start = itemPerPage * (currentPage-1);
+//     const end = start + itemPerPage;
+//     const paginatedData = arr.slice(start, end);
+//     return paginatedData.map(({ _id, author, book_image, title, description, buy_links: [{url:amazon}, {url:appleBook}], list_name }) =>
+//         ` <li class="cart-item" data-id ="${_id}">
+//             <img src="${book_image}" alt="${title}" class="cart-item-img">
+//             <div class="cart-item-content">
+//             <div class="cart-content-header">
+//                 <h3 class="cart-item-title">${title}</h3>
+//                 <p class="cart-item-category cart-item-label">${list_name}</p>
+//             </div>
+//                 <p class="cart-item-description">${description}</p>
+//                 <p class="cart-item-author cart-item-label">${author}</p>
+//                 <button class="cart-item-delete"></button>
+//                 <ul class="cart-item-links">
+//                 <li><a href="${amazon}" class="cart-item-link">amazon</a></li>
+//                 <li><a href="${appleBook}" class="cart-item-link">apple book</a></li>
+//                 </ul>
+//             </div>
+//         </li>`).join("");
+// }
+
+
+// // ----------------------------------------------------------------------------------------ВИДАЛЕННЯ ЕЛЕМЕНТІВ КОРЗИНИ
+
+// function handlerDeleteCart(e) {
+//     if (!e.target.classList.contains("cart-item-delete")) return;
    
-    const idOfBook = e.target.closest(".cart-item").dataset.id; 
-    try {
-        const products = data.filter(({ _id }) => _id !== idOfBook);
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(products));
-        data = JSON.parse(localStorage.getItem(LOCAL_KEY));
-        options.visiblePages = Math.ceil(data.length / itemPerPage);
-       cartList.innerHTML = test(data);
-  } catch (error) {
-    console.error("Get state error: ", error.message);
-    }
-    if (!data.length) {
-    emptyCart.style.display = "block";
-}
-}
+//     const idOfBook = e.target.closest(".cart-item").dataset.id; 
+//     try {
+//         const products = data.filter(({ _id }) => _id !== idOfBook);
+//         localStorage.setItem(LOCAL_KEY, JSON.stringify(products));
+//         data = JSON.parse(localStorage.getItem(LOCAL_KEY));
+//         options.visiblePages = Math.ceil(data.length / itemPerPage);
+//        cartList.innerHTML = test(data);
+//   } catch (error) {
+//     console.error("Get state error: ", error.message);
+//     }
+//     if (!data.length) {
+//     emptyCart.style.display = "block";
+// }
+// }
